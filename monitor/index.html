@@ -3613,7 +3613,7 @@ addEventListener('pointerdown',e=>{lp=Date.now();const th=e.target.closest('svg.
 
 //お問い合わせ送信用コード
 const T0=Date.now();let lastSend=0;
-const FORM_ENDPOINT = '6LckoOgtAAAAAEPTeCxMxt-8LluQ90xedhi7gzAh';
+const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycby05dRZ_Z9IP12N6cFLiuIcwBH9lI1ErBfBuNwdYhFiSUB4N8Ma8CvVyCiDhSxTnFDUg/exec';
 const RECAPTCHA_SITE_KEY = '6LckoOgtAAAAAEPTeCxMxt-8LluQ90xedhi7gzAh';
 
 async function send(payload){const c=new AbortController(),t=setTimeout(()=>c.abort(),10000);try{const r=await fetch(FORM_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:c.signal,credentials:'omit',referrerPolicy:'no-referrer'});if(!r.ok)throw 0;return true}catch(_){return false}finally{clearTimeout(t)}}
