@@ -3716,14 +3716,22 @@ f.addEventListener('submit', async e => {
       recaptchaToken: token
     };
 
-    // Google Apps Script へ送信
+// Google Apps Script へ送信
     const response = await fetch(FORM_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      redirect: 'follow'
     });
 
-    const result = await response.json();
+    const text = await response.text();
+    let result;
+    try {
+      result = JSON.parse(text);
+    } catch (_) {
+      // 万が一HTMLが返ってきた場合のエラーメッセージ
+      throw new Error('Google側のアクセス権限設定（全員）を確認してください。');
+    }
 
     if (!result.success) {
       throw new Error(result.message || '送信エラーが発生しました。');
