@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'self' https://www.google.com https://www.gstatic.com https://static.cloudflareinsights.com; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://www.google.com https://cloudflareinsights.com; form-action 'self' https://script.google.com https://script.googleusercontent.com; base-uri 'none'; object-src 'none'; frame-src https://www.google.com https://www.gstatic.com https://script.google.com https://script.googleusercontent.com; media-src 'none'; worker-src 'none'; manifest-src 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'self' https://www.google.com https://www.gstatic.com https://static.cloudflareinsights.com; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://www.google.com https://script.google.com https://script.googleusercontent.com https://cloudflareinsights.com; form-action 'self' https://script.google.com; base-uri 'none'; object-src 'none'; frame-src https://www.google.com https://www.gstatic.com; media-src 'none'; worker-src 'none'; manifest-src 'none'; upgrade-insecure-requests">
 <script src="https://www.google.com/recaptcha/api.js?render=6LckoOgtAAAAAEPTeCxMxt-8LluQ90xedhi7gzAh"></script>
 
      <!-- Google reCAPTCHA v3 スクリプト -->
@@ -3641,10 +3641,10 @@ f.querySelectorAll('.fld input,.fld textarea').forEach(i=>i.addEventListener('in
 //送信用コード     
 f.addEventListener('submit', async e => {
   e.preventDefault();
-  e.stopPropagation(); // フォーム本来の遷移を完全に停止
+  e.stopPropagation();
   let first = null;
 
-  // 入力チェック
+  // 入力チェック（元のバリデーションを維持）
   f.querySelectorAll('.fld[data-v]').forEach(w => {
     const i = w.querySelector('input,textarea'),
           v = i.type === 'checkbox' ? (i.checked ? '1' : '') : i.value.trim(),
@@ -3690,9 +3690,9 @@ f.addEventListener('submit', async e => {
   b.textContent = '送信中…';
 
   try {
-    // reCAPTCHA v3 トークンの安全な発行
+    // reCAPTCHA v3 トークンの発行
     const token = await new Promise(resolve => {
-      if (typeof grecaptcha !== 'undefined' && RECAPTCHA_SITE_KEY) {
+      if (typeof grecaptcha !== 'undefined' && typeof RECAPTCHA_SITE_KEY !== 'undefined' && RECAPTCHA_SITE_KEY) {
         grecaptcha.ready(() => {
           grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit' }).then(resolve).catch(() => resolve(''));
         });
@@ -3711,21 +3711,19 @@ f.addEventListener('submit', async e => {
       recaptchaToken: token
     };
 
-    // 一時的なフォームを作成して iframe 経由で確実にGASへ送信
-    const tempForm = document.createElement('form');
-    tempForm.action = FORM_ENDPOINT;
-    tempForm.method = 'POST';
-    tempForm.target = 'hidden_iframe';
+    // Google Apps Scriptへフォームパラメータとして送信
+    const params = new URLSearchParams();
+    params.append('data', JSON.stringify(payload));
+    Object.keys(payload).forEach(k => params.append(k, payload[k]));
 
-    const inputData = document.createElement('input');
-    inputData.type = 'hidden';
-    inputData.name = 'data';
-    inputData.value = JSON.stringify(payload);
-    tempForm.appendChild(inputData);
-
-    document.body.appendChild(tempForm);
-    tempForm.submit();
-    tempForm.remove();
+    await fetch(FORM_ENDPOINT, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: params.toString()
+    });
 
     // 完了画面の表示
     lastSend = Date.now();
