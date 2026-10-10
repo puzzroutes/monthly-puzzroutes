@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob: https://fonts.googleapis.com https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https: data: blob:;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://www.google.com https://www.gstatic.com; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; connect-src https://www.google.com; form-action https://script.google.com; base-uri 'none'; object-src 'none'; frame-src https://www.google.com; media-src 'none'; worker-src 'none'; manifest-src 'none'; upgrade-insecure-requests">
 <!--<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'; frame-src 'none'; media-src 'none'; worker-src 'none'; manifest-src 'none'; upgrade-insecure-requests">
 <!-- CSPの方針：使うものだけを許可。外部機能を足すときは、ここに許可ドメインを追加すること。
      ・フォーム送信(fetch)  → connect-src に送信先を追加し、script内の FORM_ENDPOINT に同じURLを設定
@@ -1254,6 +1254,7 @@ button{color:var(--k)}
   <div class="in">
     <h2 style="--hy:var(--y)">お申込み・お問い合わせ</h2>
     <form class="fm" id="f" novalidate>
+         <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
       <fieldset class="kind"><legend>お問い合わせ種別<em class="rq">必須</em></legend>
         <label><input type="radio" name="kind" value="個人" checked><span>個人のかた</span></label>
         <label><input type="radio" name="kind" value="法人"><span>法人・団体のかた</span></label>
