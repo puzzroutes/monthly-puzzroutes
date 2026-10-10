@@ -10,6 +10,8 @@
      ・アナリティクス(例:GA4) → script-src に https://www.googletagmanager.com、connect-src と img-src に https://www.google-analytics.com
      ・外部画像 → img-src に該当ドメインを追加
      ・決済(MOSH等)へのリンク遷移はaタグなのでCSPの対象外（そのまま動作）-->
+<script src="https://www.google.com/recaptcha/api.js?render=6LckoOgtAAAAAEPTeCxMxt-8LluQ90xedhi7gzAh"></script>
+     <!-- Google reCAPTCHA v3 スクリプト -->
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Monthlyぱずルート（モニター版）｜みて、さわって、しっかりわかる算数</title>
@@ -3612,8 +3614,13 @@ addEventListener('pointerdown',e=>{lp=Date.now();const th=e.target.closest('svg.
   const m=e.target.closest('.mon,.peek,.walk,.who .mons,.ty .mons');
   if(m){tc++;const s=m.querySelectorAll('svg');s.forEach(v=>v.classList.add('hp'));setTimeout(()=>s.forEach(v=>v.classList.remove('hp')),800);say(m,tc%10?L[Math.random()*L.length|0]:'パクパク'+tc+'回！すごい！');burst(e.clientX,e.clientY,tc%10?6:26);return}
   if(e.target.closest('a,button,input,select,textarea,label'))return;burst(e.clientX,e.clientY,5)});
+
+//お問い合わせ送信用コード
 const T0=Date.now();let lastSend=0;
-const FORM_ENDPOINT='';/* 例: 'https://example.com/api/contact'（CSPのconnect-srcにも同じ送信先を追加） */
+const FORM_ENDPOINT = '6LckoOgtAAAAAEPTeCxMxt-8LluQ90xedhi7gzAh';
+const RECAPTCHA_SITE_KEY = 'https://script.google.com/macros/s/AKfycbyIQ8KonL_QVcVRdP1Qkem_Dutv7Q7mlhmJa7BFFkNi6DZAcg9nGRJNLBTyhsQZ7MYssQ/exec';
+
+
 async function send(payload){const c=new AbortController(),t=setTimeout(()=>c.abort(),10000);try{const r=await fetch(FORM_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:c.signal,credentials:'omit',referrerPolicy:'no-referrer'});if(!r.ok)throw 0;return true}catch(_){return false}finally{clearTimeout(t)}}
 if(/^https:\/\//.test(FORM_ENDPOINT))$('#demoNote').hidden=true;
 const SHOP_URL='';
@@ -3633,32 +3640,116 @@ function setKind(){const c=f.elements.kind.value=='法人';f.classList.toggle('c
  tel.dataset.v=c?'req tel':'tel';tq.className=c?'rq':'op';tq.textContent=c?'必須':'任意';aff.classList.remove('bad');tel.classList.remove('bad')}
 f.querySelectorAll('input[name=kind]').forEach(r=>r.onchange=()=>{setKind();if(f.elements.kind.value=='法人')$('#af').focus({preventScroll:true})});setKind();
 f.querySelectorAll('.fld input,.fld textarea').forEach(i=>i.addEventListener('input',()=>i.closest('.fld').classList.remove('bad')));
-f.addEventListener('submit',async e=>{
-  e.preventDefault();let first=null;
-  f.querySelectorAll('.fld[data-v]').forEach(w=>{const i=w.querySelector('input,textarea'),v=i.type==='checkbox'?(i.checked?'1':''):i.value.trim(),t=w.dataset.v;let m='';
-    if(t.includes('req')&&!v)m=w.dataset.e;
-    else if(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/.test(v))m='使えない文字が入っているみたい…！';
-    else if(v&&t.includes('mail')&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))m='メールアドレスの形がちがうみたい…もう一度見てね！';
-    else if(v&&t.includes('tel')&&!/^[0-9０-９+\-ー()\s]{9,16}$/.test(v))m='電話番号は数字とハイフンで入れてね！（任意です）';
-    w.classList.remove('bad');void w.offsetWidth;i.removeAttribute('aria-invalid');
-    if(m){i.setAttribute('aria-invalid','true');w.classList.add('bad');w.querySelector('.err').textContent=m;first=first||i}});
-  const w=$('#warn');w.classList.remove('on');void w.offsetWidth;
-  if(first){w.textContent='あれれ？ 入力もれがあるよ！ 赤いところを見てね！';w.classList.add('on');first.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>first.focus({preventScroll:true}),350);return}
-  if(Date.now()-lastSend<30000){say($('#sb'),'少し待ってからもう一度送ってね！');return}
-  const clean=v=>String(v).normalize('NFKC').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g,'').trim().slice(0,2000);
-  const isBot=!!f.elements.website.value||Date.now()-T0<3000;
-  const payload=Object.fromEntries([...new FormData(f)].filter(([k])=>k!=='website').map(([k,v])=>[k,clean(v)]));
-  
-  const b=$('#sb');b.disabled=true;b.textContent='送信中…';
-  const useEp=!isBot&&/^https:\/\//.test(FORM_ENDPOINT);
-  const sent=useEp?await send(payload):(await new Promise(r=>setTimeout(r,900)),true);
-  if(!sent){b.disabled=false;b.textContent='送信する';w.textContent='送信できませんでした。通信状況をご確認のうえ、もう一度お試しください。';w.classList.add('on');return}
-  if(!isBot)lastSend=Date.now();
-  f.hidden=true;const ty=$('#ty');ty.hidden=false;
-  $('#tm').innerHTML=charC(0)+char1(1)+mon('c','r','7',1);
-  $('#cf').innerHTML=Array.from({length:34},(_,i)=>`<i style="left:${Math.random()*100}%;background:${Object.values(C)[i%6]};animation-delay:${(Math.random()*1.2).toFixed(2)}s"></i>`).join('');
-  ty.scrollIntoView({block:'center',behavior:'smooth'});look();
+
+     
+     
+//送信用コード     
+f.addEventListener('submit', async e => {
+  e.preventDefault();
+  let first = null;
+
+  // 入力チェック（元のバリデーションを完全維持）
+  f.querySelectorAll('.fld[data-v]').forEach(w => {
+    const i = w.querySelector('input,textarea'),
+          v = i.type === 'checkbox' ? (i.checked ? '1' : '') : i.value.trim(),
+          t = w.dataset.v;
+    let m = '';
+    if (t.includes('req') && !v) m = w.dataset.e;
+    else if (/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/.test(v)) m = '使えない文字が入っているみたい…！';
+    else if (v && t.includes('mail') && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) m = 'メールアドレスの形がちがうみたい…もう一度見てね！';
+    else if (v && t.includes('tel') && !/^[0-9０-９+\-ー()\s]{9,16}$/.test(v)) m = '電話番号は数字とハイフンで入れてね！（任意です）';
+    w.classList.remove('bad');
+    void w.offsetWidth;
+    i.removeAttribute('aria-invalid');
+    if (m) {
+      i.setAttribute('aria-invalid', 'true');
+      w.classList.add('bad');
+      w.querySelector('.err').textContent = m;
+      first = first || i;
+    }
+  });
+
+  const w = $('#warn');
+  w.classList.remove('on');
+  void w.offsetWidth;
+
+  if (first) {
+    w.textContent = 'あれれ？ 入力もれがあるよ！ 赤いところを見てね！';
+    w.classList.add('on');
+    first.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    setTimeout(() => first.focus({ preventScroll: true }), 350);
+    return;
+  }
+
+  if (Date.now() - lastSend < 30000) {
+    say($('#sb'), '少し待ってからもう一度送ってね！');
+    return;
+  }
+
+  const clean = v => String(v).normalize('NFKC').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '').trim().slice(0, 2000);
+  const isBot = !!f.elements.website.value || Date.now() - T0 < 3000;
+
+  const b = $('#sb');
+  b.disabled = true;
+  b.textContent = '送信中…';
+
+  try {
+    // reCAPTCHA v3 トークンの安全な発行
+    const token = await new Promise(resolve => {
+      if (typeof grecaptcha !== 'undefined' && RECAPTCHA_SITE_KEY) {
+        grecaptcha.ready(() => {
+          grecaptcha.execute(RECAPTCHA_SITE_KEY, { action: 'submit' }).then(resolve).catch(() => resolve(''));
+        });
+      } else {
+        resolve('');
+      }
+    });
+
+    // GASの安全設計コード（先ほどのdoPost）の項目名に合わせてデータを成形
+    const payload = {
+      type: f.elements.kind.value === '法人' ? '法人・団体' : '個人',
+      name: clean(f.elements.name.value),
+      tel: clean(f.elements.tel.value),
+      email: clean(f.elements.email.value),
+      company: f.elements.kind.value === '法人' ? clean(f.elements.org?.value || '') : '',
+      content: clean(f.elements.msg.value),
+      recaptchaToken: token
+    };
+
+    // Google Apps Script へ送信
+    const response = await fetch(FORM_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      throw new Error(result.message || '送信エラーが発生しました。');
+    }
+
+    lastSend = Date.now();
+    f.hidden = true;
+    const ty = $('#ty');
+    ty.hidden = false;
+    $('#tm').innerHTML = charC(0) + char1(1) + mon('c', 'r', '7', 1);
+    $('#cf').innerHTML = Array.from({ length: 34 }, (_, i) => `<i style="left:${Math.random() * 100}%;background:${Object.values(C)[i % 6]};animation-delay:${(Math.random() * 1.2).toFixed(2)}s"></i>`).join('');
+    ty.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    look();
+
+  } catch (err) {
+    b.disabled = false;
+    b.textContent = '送信する';
+    w.textContent = err.message || '送信できませんでした。通信状況をご確認のうえ、もう一度お試しください。';
+    w.classList.add('on');
+  }
 });
+
+
+
+
+     
 window.__pzOk=1;
 </script>
 <script>
