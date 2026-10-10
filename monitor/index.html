@@ -3619,7 +3619,7 @@ addEventListener('pointerdown',e=>{lp=Date.now();const th=e.target.closest('svg.
 //お問い合わせ送信用コード
 const T0=Date.now();let lastSend=0;
 const FORM_ENDPOINT = '6LckoOgtAAAAAEPTeCxMxt-8LluQ90xedhi7gzAh';
-const RECAPTCHA_SITE_KEY = 'https://script.google.com/macros/s/AKfycbyIQ8KonL_QVcVRdP1Qkem_Dutv7Q7mlhmJa7BFFkNi6DZAcg9nGRJNLBTyhsQZ7MYssQ/exec';
+const RECAPTCHA_SITE_KEY = 'https://script.google.com/macros/s/AKfycbyO5dRZ_Z9IP12N6cFLiUIcwBH9lI1ErBfBuWwdYhFiSUB4M8OMa8CvVyCiDhSxTnFDUg/exec';
 
 
 async function send(payload){const c=new AbortController(),t=setTimeout(()=>c.abort(),10000);try{const r=await fetch(FORM_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:c.signal,credentials:'omit',referrerPolicy:'no-referrer'});if(!r.ok)throw 0;return true}catch(_){return false}finally{clearTimeout(t)}}
@@ -3694,9 +3694,7 @@ f.addEventListener('submit', async e => {
   b.disabled = true;
   b.textContent = '送信中…';
 
-
-
-     try {
+  try {
     // reCAPTCHA v3 トークンの安全な発行
     const token = await new Promise(resolve => {
       if (typeof grecaptcha !== 'undefined' && RECAPTCHA_SITE_KEY) {
@@ -3718,18 +3716,23 @@ f.addEventListener('submit', async e => {
       recaptchaToken: token
     };
 
-    // Google Apps Scriptへ確実に届ける通信方式
-    // no-corsモードで送信し、GoogleサーバーによるHTMLブロックを回避します
-    await fetch(FORM_ENDPOINT, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: JSON.stringify(payload)
-    });
+    // 一時的なフォームを作成して iframe 経由で確実にGASへ送信
+    const tempForm = document.createElement('form');
+    tempForm.action = FORM_ENDPOINT;
+    tempForm.method = 'POST';
+    tempForm.target = 'hidden_iframe';
 
-    // 成功処理（送信完了画面の表示）
+    const inputData = document.createElement('input');
+    inputData.type = 'hidden';
+    inputData.name = 'data';
+    inputData.value = JSON.stringify(payload);
+    tempForm.appendChild(inputData);
+
+    document.body.appendChild(tempForm);
+    tempForm.submit();
+    tempForm.remove();
+
+    // 完了画面の表示
     lastSend = Date.now();
     f.hidden = true;
     const ty = $('#ty');
