@@ -2,15 +2,10 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://www.google.com https://www.gstatic.com; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; connect-src https://www.google.com; form-action https://script.google.com; base-uri 'none'; object-src 'none'; frame-src https://www.google.com; media-src 'none'; worker-src 'none'; manifest-src 'none'; upgrade-insecure-requests">
-<!--<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'; frame-src 'none'; media-src 'none'; worker-src 'none'; manifest-src 'none'; upgrade-insecure-requests">
-<!-- CSPの方針：使うものだけを許可。外部機能を足すときは、ここに許可ドメインを追加すること。
-     ・フォーム送信(fetch)  → connect-src に送信先を追加し、script内の FORM_ENDPOINT に同じURLを設定
-     ・フォームを外部へ直接POST → form-action に送信先を追加
-     ・アナリティクス(例:GA4) → script-src に https://www.googletagmanager.com、connect-src と img-src に https://www.google-analytics.com
-     ・外部画像 → img-src に該当ドメインを追加
-     ・決済(MOSH等)へのリンク遷移はaタグなのでCSPの対象外（そのまま動作）-->
+
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://www.google.com https://www.gstatic.com; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; connect-src https://www.google.com; form-action https://script.google.com; base-uri 'none'; object-src 'none'; frame-src https://www.google.com https://www.gstatic.com; media-src 'none'; worker-src 'none'; manifest-src 'none'; upgrade-insecure-requests">
 <script src="https://www.google.com/recaptcha/api.js?render=6LckoOgtAAAAAEPTeCxMxt-8LluQ90xedhi7gzAh"></script>
+
      <!-- Google reCAPTCHA v3 スクリプト -->
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -1253,8 +1248,8 @@ button{color:var(--k)}
 <section class="sec" id="form" data-z="#2DBE60" style="background:var(--g)">
   <div class="in">
     <h2 style="--hy:var(--y)">お申込み・お問い合わせ</h2>
+     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
     <form class="fm" id="f" novalidate>
-         <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
       <fieldset class="kind"><legend>お問い合わせ種別<em class="rq">必須</em></legend>
         <label><input type="radio" name="kind" value="個人" checked><span>個人のかた</span></label>
         <label><input type="radio" name="kind" value="法人"><span>法人・団体のかた</span></label>
