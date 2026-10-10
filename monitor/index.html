@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' https://www.google.com https://www.gstatic.com; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data:; connect-src https://www.google.com; form-action https://script.google.com; base-uri 'none'; object-src 'none'; frame-src https://www.google.com https://www.gstatic.com; media-src 'none'; worker-src 'none'; manifest-src 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'self' https://www.google.com https://www.gstatic.com https://static.cloudflareinsights.com; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://www.google.com https://cloudflareinsights.com; form-action 'self' https://script.google.com; base-uri 'none'; object-src 'none'; frame-src https://www.google.com https://www.gstatic.com; media-src 'none'; worker-src 'none'; manifest-src 'none'; upgrade-insecure-requests">
 <script src="https://www.google.com/recaptcha/api.js?render=6LckoOgtAAAAAEPTeCxMxt-8LluQ90xedhi7gzAh"></script>
 
      <!-- Google reCAPTCHA v3 スクリプト -->
@@ -3616,7 +3616,6 @@ const T0=Date.now();let lastSend=0;
 const FORM_ENDPOINT = '6LckoOgtAAAAAEPTeCxMxt-8LluQ90xedhi7gzAh';
 const RECAPTCHA_SITE_KEY = 'https://script.google.com/macros/s/AKfycbyO5dRZ_Z9IP12N6cFLiUIcwBH9lI1ErBfBuWwdYhFiSUB4M8OMa8CvVyCiDhSxTnFDUg/exec';
 
-
 async function send(payload){const c=new AbortController(),t=setTimeout(()=>c.abort(),10000);try{const r=await fetch(FORM_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:c.signal,credentials:'omit',referrerPolicy:'no-referrer'});if(!r.ok)throw 0;return true}catch(_){return false}finally{clearTimeout(t)}}
 if(/^https:\/\//.test(FORM_ENDPOINT))$('#demoNote').hidden=true;
 const SHOP_URL='';
@@ -3642,9 +3641,10 @@ f.querySelectorAll('.fld input,.fld textarea').forEach(i=>i.addEventListener('in
 //送信用コード     
 f.addEventListener('submit', async e => {
   e.preventDefault();
+  e.stopPropagation(); // フォーム本来の遷移を完全に停止
   let first = null;
 
-  // 入力チェック（元のバリデーションを完全維持）
+  // 入力チェック
   f.querySelectorAll('.fld[data-v]').forEach(w => {
     const i = w.querySelector('input,textarea'),
           v = i.type === 'checkbox' ? (i.checked ? '1' : '') : i.value.trim(),
@@ -3744,7 +3744,6 @@ f.addEventListener('submit', async e => {
     w.classList.add('on');
   }
 });
-
 
      
 window.__pzOk=1;
